@@ -4,9 +4,11 @@ import Navbar from './components/layout/Navbar'
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom'
 import Home from './components/pages/Home'
 import About from './components/pages/About'
+import ContactState from './components/context/contact/ContactState'
 
 const App = () => {
   return (
+    <ContactState>
     <Router>
      <div className="App">
       <Navbar />
@@ -18,8 +20,8 @@ const App = () => {
       </div>
      </div>
     </Router>
-    
-  );
+    </ContactState>    
+  )
 }
 
 export default App;
