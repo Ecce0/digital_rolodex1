@@ -1,20 +1,28 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import AlertContext from '../context/alert/AlertContext'
 import AuthContext from '../context/auth/AuthContext'
+import { Navigate } from 'react-router-dom'
 
 const Register = () => {
 	const alertContext = useContext(AlertContext)
 	const authContext = useContext(AuthContext)
 	const { setAlert } = alertContext
-	const { register } = authContext
+	const { register, error, clearErrors, isAuthenticated } = authContext
 	const [user, setUser] = useState({
 		name: '',
 		email: '',
 		password: '',
 		password2: '',
 	})
-
 	const { name, email, password, password2 } = user
+
+	useEffect(() => {
+	  if(error === 'User already exists'){
+			setAlert(error, 'danger')
+			clearErrors()
+		}
+		// eslint-disable-next-line
+	},[error])
 
 	const onChange = (e) => {
 		setUser({ ...user, [e.target.name]: e.target.value })
@@ -34,7 +42,9 @@ const Register = () => {
 			})
 		}
 	}
-
+	
+	if (isAuthenticated) return <Navigate to='/' />
+	//isAuthenticated is coming in as false right here, why?  Something to do with AuthState?/AuthReducer?
 	return (
 		<div className='form-container'>
 			<h1>
