@@ -44,7 +44,7 @@ const Register = () => {
 	}
 	
 	if (isAuthenticated) return <Navigate to='/' />
-	//isAuthenticated is coming in as false right here, why?  Something to do with AuthState?/AuthReducer?
+	
 	return (
 		<div className='form-container'>
 			<h1>
