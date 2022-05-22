@@ -5,18 +5,15 @@ import axios from 'axios'
 import setAuthToken from '../../../utils/setAuthToken'
 import {
 	REGISTER_SUCCESS,
-	REGISTER_FAIL,
 	USER_LOADED,
-	AUTH_ERROR,
 	LOGIN_SUCCESS,
-	LOGIN_FAIL,
 	LOGOUT,
 	CLEAR_ERRORS,
 } from '../types'
 
 const AuthState = ({ children }) => {
 	const intitialState = {
-		token: localStorage.getItem('token'),
+		token: localStorage.getItem("token"),
 		isAuthenticated: null,
 		loading: true,
 		error: null,
@@ -27,22 +24,23 @@ const AuthState = ({ children }) => {
 
 	//Load User
 	const loadUser = async () => {
+		const { token } = state
 		if(localStorage.token) {
 			setAuthToken(localStorage.token)
 		}
+
+		const config = {
+			headers: {
+				'Content-type': 'application/json',
+				'x-auth-token': token
+			}
+		}
 		
-		try {
-			const res = await axios.get('/api/auth')
+		const res = await axios.get('/api/auth', config)
 			dispatch({
 				type: USER_LOADED,
 				payload: res.data
 			})
-		} catch (error) {
-			console.log('Error:', error)
-			dispatch({
-				type: AUTH_ERROR
-			})
-		}
 	}
 	
 
@@ -54,47 +52,39 @@ const AuthState = ({ children }) => {
 			}
 		}
 
-		try {
-			const res = await axios.post('/api/users', formData, config)
-			dispatch({ 
-				type: REGISTER_SUCCESS, 
-				payload: res.data
-			})
+		const res = await axios.post('/api/users', formData, config)
+		 dispatch({ 
+			type: REGISTER_SUCCESS, 
+			payload: res.data
+		 })
 			
-			loadUser()
-		} catch (error) {
-			dispatch({
-			type: REGISTER_FAIL,
-			payload: error.response.data.msg
-			})
-		}
+			loadUser()		
 	}
 
 	//Login User
 	const login = async (formData) => {
 		const config = {
 			headers: {
-				'Content-type': 'application/json',
+				'Content-type': 'application/json'
 			}
 		}
 
-		try {
-			const res = await axios.post('/api/auth', formData, config)
+		const res = await axios.post('/api/auth', formData, config)
 			dispatch({ 
 				type: LOGIN_SUCCESS, 
 				payload: res.data
 			})
 			
-			loadUser()
-		} catch (error) {
-			dispatch({
-			type: LOGIN_FAIL,
-			payload: error.response.data.msg
-			})
-		}
+			loadUser()	
 	}
 
 	//Logout
+	const logout = () => {
+		localStorage.removeItem('token')
+		dispatch({
+			type: LOGOUT
+		})
+	}
 
 	//Clear Errors
 	const clearErrors = () => {
@@ -114,7 +104,8 @@ const AuthState = ({ children }) => {
 				register,
 				clearErrors,
 				loadUser,
-				login
+				login,
+				logout
 			}}
 		>
 			{children}

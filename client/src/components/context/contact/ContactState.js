@@ -2,6 +2,7 @@ import React, { useReducer } from 'react'
 import { v4 as uuidv4 } from 'uuid'
 import ContactContext from './ContactContext'
 import contactReducer from './ContactReducer'
+import axios from 'axios'
 import {
 	ADD_CONTACT,
 	DELETE_CONTACT,
@@ -10,50 +11,40 @@ import {
 	UPDATE_CONTACT,
 	FILTER_CONTACT,
 	CLEAR_FILTER,
+	CONTACT_ERROR
 } from '../types'
 
 const ContactState = ({ children }) => {
 	const intitialState = {
-		contacts: [
-			{
-				id: 1,
-				name: 'Sarah Watson',
-				email: 'sara@gmail.com',
-				phone: '222-222-2222',
-				type: 'personal',
-			},
-			{
-				id: 2,
-				name: 'Jimmy Davis',
-				email: 'jimmy@gmail.com',
-				phone: '222-333-3333',
-				type: 'professional',
-			},
-			{
-				id: 3,
-				name: 'Jane Doe',
-				email: 'jane@gmail.com',
-				phone: '444-444-4444',
-				type: 'personal',
-			},
-			{
-				id: 4,
-				name: 'Jone Doe',
-				email: 'johnnie@gmail.com',
-				phone: '555-555-5555',
-				type: 'professional',
-			},
-		],
-    current: null,
-    filtered: null
+	 contacts: [],
+     current: null,
+     filtered: null,
+	 error: null
 	}
 
 	const [state, dispatch] = useReducer(contactReducer, intitialState)
 
 	//Add Contact
-	const addContact = (contact) => {
-		contact.id = uuidv4()
-		dispatch({ type: ADD_CONTACT, payload: contact })
+	const addContact = async (contact) => {
+		const config = {
+			headers: {
+				'Content-Type': 'application/json'
+			}
+		}
+
+		try {
+			const res = await axios.post('/api/contacts', contact, config)
+			dispatch({ 
+				type: ADD_CONTACT, 
+				payload: res.data 
+			})
+		} catch (error) {
+			dispatch({ 
+				type: CONTACT_ERROR,
+				payload: error.response.msg
+			})
+		}
+		
 	}
 
 	//Delete Contact
@@ -86,7 +77,7 @@ const ContactState = ({ children }) => {
     dispatch({ type: CLEAR_FILTER })
   }
 
-	const { contacts, current, filtered } = state
+	const { contacts, current, filtered, error } = state
 
 	return (
 		<ContactContext.Provider
@@ -94,7 +85,8 @@ const ContactState = ({ children }) => {
 				contacts,
         current,
         filtered,
-				addContact,
+		error,
+		addContact,
         deleteContact,
         setCurrent,
         clearCurrent,

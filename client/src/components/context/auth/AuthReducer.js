@@ -9,7 +9,8 @@ import {
 	CLEAR_ERRORS,
 } from '../types'
 
-export default (state, action ) => {
+// eslint-disable-next-line
+export default (state, action) => {
     switch(action.type) {
         case REGISTER_SUCCESS:
             localStorage.setItem('token', action.payload.token)
@@ -22,8 +23,8 @@ export default (state, action ) => {
         case REGISTER_FAIL:
         case AUTH_ERROR:
         case LOGIN_FAIL:
-            localStorage.removeItem('token')
-            return {
+        case LOGOUT:
+             return {
                 ...state,
                 token: null,
                 isAuthenticated: false,
@@ -44,16 +45,16 @@ export default (state, action ) => {
                 user: action.payload
             }
         case LOGIN_SUCCESS:
+         // eslint-disable-next-line
         case REGISTER_SUCCESS:
-        localStorage.setItem('token', action.payload.token)
+          localStorage.setItem('token', action.payload.token)
             return {
                 ...state,
                 ...action.payload,
                 isAuthenticated: true,
                 loading: false
-            }
-        
+            }        
         default:
-            return state
+            throw Error(`Unhandled type: ${action.type}, ${action.payload}`)
     }
 }

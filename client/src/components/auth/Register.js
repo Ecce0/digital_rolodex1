@@ -22,7 +22,7 @@ const Register = () => {
 			clearErrors()
 		}
 		// eslint-disable-next-line
-	},[error])
+	}, [error])
 
 	const onChange = (e) => {
 		setUser({ ...user, [e.target.name]: e.target.value })
@@ -73,11 +73,11 @@ const Register = () => {
 						minLength='6'
 					/>
 				</div>
-				<input
+				<button
 					type='submit'
-					value='Register'
 					className='btn btn-primary btn-block'
-				/>
+				> Register
+				</button>
 			</form>
 		</div>
 	)
