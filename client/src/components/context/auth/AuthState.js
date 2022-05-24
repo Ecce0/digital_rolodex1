@@ -1,6 +1,6 @@
-import React, { useReducer } from 'react'
+import React, { useReducer, useEffect, useContext } from 'react'
 import AuthReducer from './AuthReducer'
-import authContext from './AuthContext'
+import AuthContext from './AuthContext'
 import axios from 'axios'
 import setAuthToken from '../../../utils/setAuthToken'
 import {
@@ -9,107 +9,105 @@ import {
 	LOGIN_SUCCESS,
 	LOGOUT,
 	CLEAR_ERRORS,
+	REGISTER_FAIL,
+	LOGIN_FAIL,
+	AUTH_ERROR,
 } from '../types'
 
-const AuthState = ({ children }) => {
-	const intitialState = {
-		token: localStorage.getItem("token"),
-		isAuthenticated: null,
-		loading: true,
-		error: null,
-		user: null,
+	export const useAuth = () => {
+		const { state, dispatch } = useContext(AuthContext)
+		return [state, dispatch ]
 	}
 
-	const [state, dispatch] = useReducer(AuthReducer, intitialState)
-
 	//Load User
-	const loadUser = async () => {
-		const { token } = state
-		if(localStorage.token) {
-			setAuthToken(localStorage.token)
-		}
-
-		const config = {
-			headers: {
-				'Content-type': 'application/json',
-				'x-auth-token': token
-			}
-		}
+	export const loadUser = async (dispatch) => {
 		
-		const res = await axios.get('/api/auth', config)
+		try {
+			const res = await axios.get('/api/auth')
 			dispatch({
 				type: USER_LOADED,
 				payload: res.data
 			})
+		} catch (error) {
+			dispatch({
+				type: AUTH_ERROR
+			})
+			
+		}			
 	}
 	
-
-	//Register User
-	const register = async (formData) => {
-		const config = {
-			headers: {
-				'Content-type': 'application/json',
-			}
-		}
-
-		const res = await axios.post('/api/users', formData, config)
-		 dispatch({ 
-			type: REGISTER_SUCCESS, 
-			payload: res.data
-		 })
-			
-			loadUser()		
-	}
-
 	//Login User
-	const login = async (formData) => {
-		const config = {
-			headers: {
-				'Content-type': 'application/json'
-			}
-		}
-
-		const res = await axios.post('/api/auth', formData, config)
+	export const login = async (dispatch, formData) => {
+		
+		try {
+			const res = await axios.post('/api/auth', formData)
 			dispatch({ 
 				type: LOGIN_SUCCESS, 
 				payload: res.data
 			})
-			
-			loadUser()	
+		
+			loadUser(dispatch)	
+		} catch (error) {
+			dispatch({
+				type: LOGIN_FAIL,
+				payload: error.response.data.msg
+			})
+		}
 	}
 
+
+	//Register User
+	export const register = async (dispatch, formData) => {
+		
+			const res = await axios.post('/api/users', formData)
+		 dispatch({ 
+			type: REGISTER_SUCCESS, 
+			payload: res.data
+		 })	
+
+		 loadUser(dispatch)
+			 
+	}
+
+	
 	//Logout
-	const logout = () => {
-		localStorage.removeItem('token')
+	export const logout = (dispatch) => {
 		dispatch({
 			type: LOGOUT
 		})
 	}
 
 	//Clear Errors
-	const clearErrors = () => {
+	export const clearErrors = (dispatch) => {
 		dispatch({ type: CLEAR_ERRORS})
+
 	}
 
-	const { token, isAuthenticated, loading, error, user } = state
+	const AuthState = ({ children }) => {
+		const initialState = {
+			token: localStorage.getItem("token"),
+			isAuthenticated: null,
+			loading: true,
+			error: null,
+			user: null
+		}
+
+	const [ state, dispatch ] = useReducer(AuthReducer, initialState)
+	const { token, loading } = state
+
+	setAuthToken(token)
+	if(loading) {
+		loadUser(dispatch)
+	}
+
+	useEffect(() => {
+		setAuthToken(token)
+	}, [token])
 
 	return (
-		<authContext.Provider
-			value={{
-				token,
-				isAuthenticated,
-				loading,
-				error,
-				user,
-				register,
-				clearErrors,
-				loadUser,
-				login,
-				logout
-			}}
-		>
+		<AuthContext.Provider value={{ state: state, dispatch }}>
 			{children}
-		</authContext.Provider>
+		</AuthContext.Provider>
 	)
 }
 

@@ -10,11 +10,11 @@ import {
 } from '../types'
 
 // eslint-disable-next-line
-export default (state, action) => {
+const AuthReducer = (state, action) => {
     switch(action.type) {
         case REGISTER_SUCCESS:
-            localStorage.setItem('token', action.payload.token)
-            return {
+        case LOGIN_SUCCESS:
+             return {
                 ...state,
                 ...action.payload,
                 isAuthenticated: true,
@@ -42,19 +42,11 @@ export default (state, action) => {
                 ...state,
                 isAuthenticated: true,
                 loading: false,
-                user: action.payload
-            }
-        case LOGIN_SUCCESS:
-         // eslint-disable-next-line
-        case REGISTER_SUCCESS:
-          localStorage.setItem('token', action.payload.token)
-            return {
-                ...state,
-                ...action.payload,
-                isAuthenticated: true,
-                loading: false
+                user: action.payload                
             }        
         default:
             throw Error(`Unhandled type: ${action.type}, ${action.payload}`)
     }
 }
+
+export default AuthReducer
