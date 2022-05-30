@@ -4,13 +4,13 @@ import Spinner from '../layout/Spinner'
 import { getContacts, useContacts } from '../context/contact/ContactState'
 
 const Contacts = () => {
-	const [ contactState ] = useContacts()
+	const [ contactState, contactDispatch ] = useContacts()
 	const { contacts, filtered, loading } = contactState
 		
 	useEffect(() => {
-		getContacts()
-		//eslint-disable-next-line
-	}, [])
+		getContacts(contactDispatch)
+		
+	}, [contactDispatch])
 
 	if (contacts === 0 && !loading) {
 		return <h4>Please add a contact</h4>

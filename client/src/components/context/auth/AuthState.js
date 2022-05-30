@@ -21,9 +21,17 @@ import {
 
 	//Load User
 	export const loadUser = async (dispatch) => {
+		const tokenAuth = localStorage.getItem('token')
+
+		const config = {
+			headers: {
+				'Content-type': 'application/json',
+				'x-auth-token': tokenAuth
+			}
+		}
 		
 		try {
-			const res = await axios.get('/api/auth')
+			const res = await axios.get('/api/auth', config)
 			dispatch({
 				type: USER_LOADED,
 				payload: res.data
@@ -100,7 +108,9 @@ import {
 		loadUser(dispatch)
 	}
 
-	useEffect(() => {
+	console.log(token)
+
+	useEffect(() => {		
 		setAuthToken(token)
 	}, [token])
 
