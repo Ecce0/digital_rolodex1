@@ -46,15 +46,13 @@ import {
 	
 	//Login User
 	export const login = async (dispatch, formData) => {
-		
+		loadUser(dispatch)	
 		try {
 			const res = await axios.post('/api/auth', formData)
 			dispatch({ 
 				type: LOGIN_SUCCESS, 
 				payload: res.data
-			})
-		
-			loadUser(dispatch)	
+			})			
 		} catch (error) {
 			dispatch({
 				type: LOGIN_FAIL,
@@ -66,14 +64,21 @@ import {
 
 	//Register User
 	export const register = async (dispatch, formData) => {
-		
-			const res = await axios.post('/api/users', formData)
+		 loadUser(dispatch)
+
+		 try {
+			 	const res = await axios.post('/api/users', formData)
 		 dispatch({ 
 			type: REGISTER_SUCCESS, 
 			payload: res.data
 		 })	
-
-		 loadUser(dispatch)
+		 } catch (error) {
+			 dispatch({
+				 type: REGISTER_FAIL,
+				 payload: error.response.data.msg
+			 })
+		 }
+				
 			 
 	}
 
@@ -107,8 +112,6 @@ import {
 	if(loading) {
 		loadUser(dispatch)
 	}
-
-	console.log(token)
 
 	useEffect(() => {		
 		setAuthToken(token)
