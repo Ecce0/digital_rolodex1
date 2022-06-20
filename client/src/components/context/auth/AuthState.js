@@ -49,6 +49,7 @@ import {
 		loadUser(dispatch)	
 		try {
 			const res = await axios.post('/api/auth', formData)
+			
 			dispatch({ 
 				type: LOGIN_SUCCESS, 
 				payload: res.data

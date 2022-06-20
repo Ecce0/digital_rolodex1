@@ -8,7 +8,7 @@ const Navbar = ({ title, icon }) => {
   const [authState, authDispatch] = useAuth()
   const { isAuthenticated, user } = authState
 
-  // we just need the contact dispatch without state.
+
   const contactDispatch = useContacts()[1]
 
   const onLogout = () => {

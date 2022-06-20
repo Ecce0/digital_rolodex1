@@ -42,7 +42,7 @@ import {
 		return {
 		  ...state,
 		  contacts: null,
-		  filtered: null,
+		  filtered: [],
 		  error: null,
 		  current: null
 		}
@@ -67,7 +67,7 @@ import {
 	  case CLEAR_FILTER:
 		return {
 		  ...state,
-		  filtered: null
+		  filtered: []
 		}
 	  case CONTACT_ERROR:
 		return {

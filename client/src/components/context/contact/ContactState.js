@@ -26,7 +26,7 @@ export const useContacts = () => {
 export const getContacts = async (dispatch) => {
   try {
     const res = await axios.get('/api/contacts')
-
+      
     dispatch({
       type: GET_CONTACTS,
       payload: res.data

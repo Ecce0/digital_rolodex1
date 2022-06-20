@@ -6,7 +6,7 @@ import { getContacts, useContacts } from '../context/contact/ContactState'
 const Contacts = () => {
 	const [ contactState, contactDispatch ] = useContacts()
 	const { contacts, filtered, loading } = contactState
-		
+	
 	useEffect(() => {
 		getContacts(contactDispatch)
 		
@@ -17,20 +17,20 @@ const Contacts = () => {
 	}
 
 	return (
-		<>
+		<div>
 		{ contacts !== null && !loading ? 
-		   filtered !== null
-				? filtered.map((contact) => (
+		   filtered.length !== 0 ? 
+			 filtered.map((contact) => (
 						<ContactItem key={contact._id} contact={contact} />
 				  ))
 				: contacts.map((contact) => (
 						<ContactItem key={contact._id} contact={contact} />
+						
 				  )) 
 			:
 		  <Spinner />
-		}
-		
-		</>
+		}		
+		</div>
 	)
 }
 
