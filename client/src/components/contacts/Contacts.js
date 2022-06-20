@@ -7,6 +7,7 @@ const Contacts = () => {
 	const [ contactState, contactDispatch ] = useContacts()
 	const { contacts, filtered, loading } = contactState
 	
+	
 	useEffect(() => {
 		getContacts(contactDispatch)
 		
