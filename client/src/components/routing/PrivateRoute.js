@@ -1,7 +1,7 @@
 import React from 'react'
 import { Navigate } from 'react-router-dom'
 import { useAuth } from '../context/auth/AuthState'
-import Spinner from '../../components/layout/Spinner'
+import Spinner from '../layout/Spinner'
 
 const PrivateRoute = ({ component: Component }) => {
 	const [authState] = useAuth()
