@@ -1,4 +1,0 @@
-{
-    "mongoURI": "mongodb+srv://ecce0:12345@digitialrolodex.ajduw.mongodb.net/?retryWrites=true&w=majority",
-    "jwtSecret": "secret"
-}
